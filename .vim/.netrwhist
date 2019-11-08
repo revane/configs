@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/Users/edwin.vane/dev/black-coral/notes/lib/src'
+let g:netrw_dirhist_2='/Users/edwin.vane/dev/black-coral/out/host/prototypes/camera/photo_store/lib/CMakeFiles'
+let g:netrw_dirhist_3='/Users/edwin.vane/dev/black-coral'
+let g:netrw_dirhist_4='/Users/edwin.vane/dev'
+let g:netrw_dirhist_5='/Volumes/android/external/qt5/qtbase/mkspecs/android-clang'
+let g:netrw_dirhist_6='/Users/edwin.vane/dev/law3/.repo'

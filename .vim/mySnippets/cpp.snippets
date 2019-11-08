@@ -1,0 +1,424 @@
+global !p
+from my_snippet_helpers import *
+import re
+
+def classFromTestBufferName(suffix=""):
+	return snip.basename[5:] + suffix if snip.basename.startswith("test_") else ""
+
+def findClass():
+	for x in range(snip.line, -1, -1):
+		m = re.search("class (\w+)", snip.buffer[x])
+		if m is not None:
+			return m.group(1)
+			className = m.group(1)
+	return None
+
+def toCStr():
+	data = re.sub(r"//.*$|/\*.*?\*/", "", snip.v.text, flags=re.MULTILINE)
+	m = re.search(r"enum(?:\s+class)?\s+(\w*)\s*{", data, flags=re.MULTILINE)
+	name = m.group(1)
+
+	snip.rv = snip.v.text
+	snip.rv = snip.rv + r"""
+constexpr const char* toCStr({0} value)
+{{
+	switch (value) {{""".format(name)
+	
+	for e in re.finditer(r"\w+", data[m.end(0):]):
+		snip.rv = snip.rv + r"""
+	case {0}::{1}:
+		return "{1}";""".format(name, e.group(0))
+	snip.rv = snip.rv + r"""
+    }
+}"""
+
+endglobal
+
+
+snippet c "C-Comment selection"
+/*${VISUAL}*/
+endsnippet
+
+snippet iface
+#pragma once
+
+namespace thalmic {
+
+class ${1:`!p snip.rv = snip.basename`} {
+public:
+	virtual ~$1() = default;
+
+	$0
+};
+
+} // namespace thalmic
+endsnippet
+
+snippet header
+#pragma once
+
+namespace thalmic {
+
+$0
+
+} // namespace thalmic
+endsnippet
+
+snippet ns
+namespace$1 {
+
+${VISUAL}$0
+
+} // namespace$1
+endsnippet
+
+snippet so
+#include "`!p snip.rv = snip.basename + ".hpp"`"
+
+namespace thalmic {
+
+$0
+
+} // namespace thalmic
+endsnippet
+
+snippet tso
+#include "`!p snip.rv = classFromTestBufferName(".hpp")`"
+
+#include <gmock/gmock.h>
+
+using namespace thalmic;
+using namespace ::testing;
+//using namespace thalmic::testing;
+endsnippet
+
+snippet qtso "Unit test source with QCoreApplication"
+#include "`!p snip.rv = classFromTestBufferName(".hpp")`"
+
+#include <QCoreApplication>
+#include <QTimer>
+
+#include <gmock/gmock.h>
+
+using namespace thalmic;
+using namespace ::testing;
+using namespace thalmic::testing;
+
+int main(int argc, char** argv)
+{
+	QCoreApplication app{argc, argv};
+	InitGoogleTest(&argc, argv);
+	QTimer::singleShot(0, [] {
+		int result = RUN_ALL_TESTS();
+		qApp->exit(result);
+	});
+	return app.exec();
+}
+endsnippet
+
+snippet mock "Mock Header" "os.path.basename(vim.current.buffer.name).startswith('Mock')" be
+#pragma once
+
+#include "${1:`!p snip.rv = "I" + snip.basename[4:] + ".hpp"`}"
+#include <gmock/gmock.h>
+
+namespace thalmic {
+namespace testing {
+
+class `!p snip.rv = snip.basename` : public ${1/.hpp//} {
+public:
+$0
+};
+
+} // namespace testing
+} // namespace thalmic
+endsnippet
+
+snippet builder
+// [[[ Builder
+namespace {
+
+class Builder {
+public:
+	std::unique_ptr<${1:`!p snip.rv = classFromTestBufferName()`}> build()
+	{
+		return std::make_unique<$1>();
+	}
+
+private:
+	${0}
+};
+
+} // namespace
+// ]]]
+
+endsnippet
+
+snippet ex "Exception"
+class ${1} : public std::exception {
+public:
+	$1(std::string what)
+	: _what{std::move(what)}
+	{
+	}
+	
+	const char* what() const noexcept override { return _what.c_str(); }
+
+private:
+	std::string _what;
+};
+endsnippet
+
+snippet bi "Binder Interface"
+class ${1:`!p snip.rv = snip.basename`} : public android::IInterface, public ${2:`!p snip.rv = re.split("Service", snip.basename)[0]`} {
+public:
+	DECLARE_META_INTERFACE(${1/^I//});
+};
+endsnippet
+
+snippet bnh "Bn Header"
+class ${1:`!p snip.rv = snip.basename`} : public android::BnInterface<${1/Bn/I/}> {
+public:
+	/// @name BnInterface Overrides
+	/// @{
+	android::status_t onTransact(uint32_t code,
+								const android::Parcel& data,
+								android::Parcel* reply,
+								uint32_t flags = 0) override;
+	/// @}
+};
+endsnippet
+
+snippet bph "Bp Definition"
+class Bp${1:`!p snip.rv = snip.basename[1:]`} : public BpInterface<I$1> {
+public:
+	explicit Bp$1(const sp<IBinder>& impl)
+	: BpInterface<I$1>{impl}
+	{
+	}
+	
+	${0:// members...}
+};
+endsnippet
+
+snippet bpm "Bp Member"
+$1 Bp${2:`!p snip.rv = snip.basename[1:]`}::$3($0)
+{
+	Parcel data, reply;
+	STATUSCHECK_THROW(data.writeInterfaceToken(I$2::descriptor), "Failed to write to Parcel");
+
+	// Obj obj;
+	// auto wrapper = makeParcelable(obj);
+	// STATUSCHECK_THROW(reply.readParcelable(&wrapper), "reading from parcel failed");
+	// Other Args?
+
+	STATUSCHECK_THROW(remote()->transact($2OpCode::$3, data, &reply), "transaction failed");
+	auto result = ${4:`!p snip.rv = re.split("Service", snip.basename[1:])[0]`}Result::ok;
+	STATUSCHECK_THROW(readEnum(reply, result), "Failed to read from parcel");
+	if (result != $4Result::ok) {
+		return result;
+	}
+
+	// Other output args
+
+	return result;
+}
+
+endsnippet
+
+snippet binderimpl
+#include <binder/Parcel.h>
+#include <klog/log_tag.h>
+#include <util/BinderException.hpp>
+#include <util/ParcelableWrapper.hpp>
+#include <util/StatusCheck.hpp>
+#include <util/StringLiteral.hpp>
+//#include "Bn${1:`!p snip.rv = snip.basename[1:]`}.hpp"
+
+using namespace android;
+
+namespace {
+
+opcodes
+} // namespace
+
+namespace thalmic {
+
+bph
+bpm
+bnimpl
+
+IMPLEMENT_META_INTERFACE($1, "${2:service name}");
+
+} // namespace thalmic
+endsnippet
+
+snippet bnimpl
+status_t Bn${1:`!p snip.rv = snip.basename[1:]`}::onTransact(uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags)
+{
+	auto baseTransact = BBinder::onTransact(code, data, reply, flags);
+	if (baseTransact != UNKNOWN_TRANSACTION) {
+		return baseTransact;
+	}
+
+	CHECK_INTERFACE(I$1, data, reply);
+
+	switch (code) {
+	case $1OpCode::$2: {
+		// Read args:
+		//    STATUSCHECK_RETURN(/*...*/)
+		auto result = $2(/*args*/);
+		STATUSCHECK_RETURN(writeEnum(*reply, result));
+		if (result != ${3:`!p snip.rv = re.split("Service", snip.basename[1:])[0]`}Result::ok) {
+			return OK;
+		}
+		// Write results
+		$0
+		return OK;
+	}
+	// more opcodes...
+	}
+
+	return UNKNOWN_TRANSACTION;
+}
+endsnippet
+
+snippet opcodes "Define Empty Binder Op-Code EnuM"
+namespace ${1:`!p snip.rv = snip.basename[1:]`}OpCode {
+enum {
+	$0 = IBinder::FIRST_CALL_TRANSACTION,
+};
+} // namespace $1OpCode
+
+endsnippet
+
+snippet iio
+#include <iostream> //DEBUG
+endsnippet
+
+snippet dgroup
+/// @name $1 Implementation
+/// @{
+${VISUAL}$0
+/// @}
+endsnippet
+
+snippet noformat
+// clang-format off
+${VISUAL}$0
+// clang-format on
+endsnippet
+
+post_jump clip_start(snip, 80)
+snippet fold
+// [[[ $1 ----------------------------------------------------------------------
+
+${VISUAL}
+
+// ]]] -------------------------------------------------------------------------
+endsnippet
+
+snippet aaa
+// Arrange
+$0
+
+// Act
+
+// Assert
+endsnippet
+
+snippet mv "std::move() visual" "snip.visual_text" we
+std::move(${VISUAL})$0
+endsnippet
+snippet mv "std::move()" w
+std::move($1)
+endsnippet
+
+snippet ms "std::make_shared" w
+std::make_shared<$1>($0)
+endsnippet
+
+snippet mu "std::make_unique" w
+std::make_unique<$1>($0)
+endsnippet
+
+snippet sp "std::shared_ptr<>" w
+std::shared_ptr<$1> 
+endsnippet
+snippet sp "std::shared_ptr<>" "snip.visual_text" we
+std::shared_ptr<${VISUAL}>$0
+endsnippet
+
+snippet up "std::unique_ptr<>" w
+std::unique_ptr<$1>
+endsnippet
+snippet up "std::unique_ptr<> visual" "snip.visual_text" we
+std::unique_ptr<${VISUAL}>$0
+endsnippet
+
+snippet main
+int main(int argc, char** argv)
+{
+$0
+}
+endsnippet
+
+snippet class
+class `!p snip.rv = snip.basename` $1{
+public:
+$0
+};
+endsnippet
+
+snippet class "class named with visual selection" "snip.visual_text" we
+class ${VISUAL} $1{
+public:
+$0
+};
+endsnippet
+
+snippet q8 "qUtf8Printable visual" w
+qUtf8Printable($1)
+endsnippet
+snippet q8 "qUtf8Printable" "snip.visual_text" we
+qUtf8Printable(${VISUAL})$0
+endsnippet
+
+snippet v~ "virtual destructor" "findClass()" e
+	virtual ~`!p snip.rv = snip.context`() = default;
+endsnippet
+
+snippet ~ "destructor" "findClass()" e
+	~`!p snip.rv = snip.context`();
+endsnippet
+
+snippet ~o "overridden destructor" "findClass()" e
+	~`!p snip.rv = snip.context`() override;
+endsnippet
+
+snippet uns "using namespace"
+using namespace $1;
+$0
+endsnippet
+
+snippet tocstr "Create toCStr() for enums"
+`!p toCStr()`
+endsnippet
+
+snippet wf "Wrap selection in function call" w
+$1(${VISUAL})$0
+endsnippet
+
+snippet dl "Death Listener"
+class DeathListener : public IBinder::DeathRecipient {
+public:
+	DeathListener(std::function<void(const wp<IBinder>& who)> callback)
+	: _callback{std::move(callback)}
+	{
+	}
+	void binderDied(const wp<IBinder>& who) override { _callback(who); }
+
+private:
+	std::function<void(const wp<IBinder>& who)> _callback;
+};
+endsnippet

@@ -1,0 +1,14 @@
+global !p
+from jira import JIRA
+try:
+  j = JIRA(server='https://jira.thalmiclabs.com', basic_auth=('edwin.vane.api', '3MPT6WcGPv$!%FrND3FA$69v'), max_retries=0, logging=False)
+except: 
+  pass
+endglobal
+
+snippet jira
+JIRA: ${1:`!p try:
+  snip.rv=j.search_issues('assignee =edwin.vane and status="In Progress" and project=knbc order by updatedDate desc')[0].key + "\n"
+except:
+  snip.rv = "KNBC-"`}
+endsnippet
