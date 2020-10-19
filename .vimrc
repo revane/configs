@@ -46,6 +46,7 @@ Plugin 'elzr/vim-json'
 Plugin 'pboettch/vim-cmake-syntax'
 Plugin 'tell-k/vim-autopep8'
 Plugin 'tommcdo/vim-exchange'
+Plugin 'udalov/kotlin-vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
