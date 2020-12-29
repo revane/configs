@@ -1,6 +1,14 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
+if !exists("g:os")
+    if has("win64") || has("win32") || has("win16")
+        let g:os = "Windows"
+    else
+        let g:os = substitute(system('uname'), '\n', '', '')
+    endif
+endif
+
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsListSnippets="<c-l>"
 let g:UltiSnipsSnippetDirectories=["UltiSnips", "mySnippets"]
@@ -199,4 +207,8 @@ map ,t1 :call MkTitle('/')<CR>
 map ,t2 :call MkTitle('=')<CR>
 map ,t3 :call MkTitle('-')<CR>
 map ,f :call FillLine('-')<CR>
-set guifont=Monaco:h12
+if g:os == "Linux"
+    set guifont=Monaco\ 10
+elseif g:os == "Darwin"
+    set guifont=Monaco:h12
+endif
