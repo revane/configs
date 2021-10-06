@@ -208,7 +208,7 @@ map ,t2 :call MkTitle('=')<CR>
 map ,t3 :call MkTitle('-')<CR>
 map ,f :call FillLine('-')<CR>
 if g:os == "Linux"
-    set guifont=Monaco\ 10
+    set guifont=Fira\ Code\ 10
 elseif g:os == "Darwin"
     set guifont=Monaco:h12
 endif

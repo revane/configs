@@ -47,6 +47,9 @@ alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 [ -f ~/.git-completion.bash ] && . ~/.git-completion.bash
 [ -f ~/.ninja-complete ] && . ~/.ninja-complete
 
+CFG_HOME=${HOME}/dev/configs
+cfg() { git --git-dir="${CFG_HOME}/.git/" --work-tree="${HOME}" "$@" ; }
+
 function grt {
     git rev-parse && cd $(git rev-parse --show-toplevel)
     if [[ $# -gt 0 ]]; then
@@ -58,4 +61,10 @@ function ma {
 #    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home
 }
 function ua { hdiutil detach /Volumes/android; }
-eval "$(pyenv init -)"
+
+if [[ `which pyenv` ]]; then
+    eval "$(pyenv init -)"
+fi
+
+/usr/bin/keychain ${HOME}/.ssh/id_rsa
+source ${HOME}/.keychain/${HOSTNAME}-sh
