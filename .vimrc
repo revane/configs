@@ -72,8 +72,10 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 let g:crunch_result_type_append=0
 syn on
-set background=light
-colorscheme solarized
+if has("gui_running")
+    set background=light
+    colorscheme solarized
+endif
 filetype plugin indent on
 
 nnoremap ,cd :cd %:p:h<CR>
