@@ -37,7 +37,6 @@ export ANT_HOME=/Users/edwin.vane/Library/apache-ant-1.9.6
 export PATH=/Users/edwin.vane/bin:/usr/local/opt/gnu-sed/libexec/gnubin:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/22.0.1:$ANT_HOME/bin:$PATH
 export PATH=$PATH:$(gem environment gempath | awk 'BEGIN { FS = ":"; OFS=":" }; { for (i = 1; i <= NF; i++) { $i=$i"/bin"} print $0 }')
 alias ls='ls -G'
-alias grep='/usr/local/bin/ggrep'
 alias :e='vim'
 alias mp='mvim --remote-silent'
 alias agl='ag --no-group --ignore-dir test'
