@@ -55,6 +55,10 @@ Plugin 'pboettch/vim-cmake-syntax'
 Plugin 'tell-k/vim-autopep8'
 Plugin 'tommcdo/vim-exchange'
 Plugin 'udalov/kotlin-vim'
+Plugin 'google/vim-maktaba'
+Plugin 'google/vim-codefmt'
+Plugin 'google/vim-glaive'
+Plugin 'https://gn.googlesource.com/gn', { 'rtp': 'misc/vim' }
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -77,6 +81,13 @@ if has("gui_running")
     colorscheme solarized
 endif
 filetype plugin indent on
+
+call glaive#Install()
+
+augroup CodeFmt
+    autocmd!
+    autocmd FileType gn AutoFormatBuffer gn
+augroup END
 
 nnoremap ,cd :cd %:p:h<CR>
 set tabstop=4
