@@ -91,6 +91,7 @@ augroup END
 
 nnoremap ,cd :cd %:p:h<CR>
 set tabstop=4
+set bs=indent,eol,start
 set shiftwidth=4
 set expandtab
 set nowrap
