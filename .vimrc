@@ -87,12 +87,13 @@ call glaive#Install()
 augroup CodeFmt
     autocmd!
     autocmd FileType gn AutoFormatBuffer gn
+    autocmd FileType javascript AutoFormatBuffer clang-format
 augroup END
 
 nnoremap ,cd :cd %:p:h<CR>
-set tabstop=4
+set tabstop=2
 set bs=indent,eol,start
-set shiftwidth=4
+set shiftwidth=2
 set expandtab
 set nowrap
 set foldmethod=marker

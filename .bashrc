@@ -5,17 +5,13 @@ function setps1 {
     #   BLACK_CORAL_ENVSETUP_MAGIC_COOKIE - Black Coral's build/envsetup.sh
     # Python version is always prefixed.
     PROMPT_CORE="\W$ "
-    PROMPT_PREFIX=$(tmp=${BLACK_CORAL_CONANSETUP_MAGIC_COOKIE+B}${ANDROID_PRODUCT_OUT+A}${STY+S}; echo ${tmp}${tmp:+-})
-    PY_PREFIX=$(python --version 2>&1 | cut -d ' ' -f 2 | cut -d '.' -f 1)
+    ACTIVATE_PREFIX=${PW_PROJECT_ROOT+$(basename $(realpath ${PW_PROJECT_ROOT}))}
     printf "\e];${TABNAME:-bash}\a"
     if [[ -z ${TERM+x} ]]; then
-        export PS1=${PY_PREFIX}-${PROMPT_CORE}
+        export PS1=${ACTIVATE_PREFIX}-${PROMPT_CORE}
     else
-        color=3
-        if [[ -n ${PROMPT_PREFIX:+x} ]]; then
-            color=2
-        fi
-        export PS1="\[$(tput setaf ${color})\]${PY_PREFIX}-${PROMPT_PREFIX}${PROMPT_CORE}\[$(tput sgr0)\]"
+        color=2
+        export PS1="\[$(tput setaf ${color})\]${ACTIVATE_PREFIX}${ACTIVATE_PREFIX:+-}${PROMPT_CORE}\[$(tput sgr0)\]"
     fi
 }
 function tabname {
@@ -41,8 +37,10 @@ alias :e='vim'
 alias mp='mvim --remote-silent'
 alias agl='ag --no-group --ignore-dir test'
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias gcert-fix='gcert --glogin_connect_timeout=60s --glogin_request_timeout=60s'
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+[ -f /usr/share/bash-completion/completions/git ] && . /usr/share/bash-completion/completions/git
 [ -f ~/.git-completion.bash ] && . ~/.git-completion.bash
 [ -f ~/.ninja-complete ] && . ~/.ninja-complete
 
