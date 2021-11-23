@@ -1,3 +1,8 @@
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
 function setps1 {
     # Things that change the prompt colour:
     #   STY - detects "screen"
