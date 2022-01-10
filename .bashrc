@@ -42,7 +42,6 @@ alias ls='ls -G --color=auto'
 alias :e='vim'
 alias mp='mvim --remote-silent'
 alias agl='ag --no-group --ignore-dir test'
-alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias gcert-fix='gcert --glogin_connect_timeout=60s --glogin_request_timeout=60s'
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
