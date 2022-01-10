@@ -13,10 +13,10 @@ function setps1 {
     ACTIVATE_PREFIX=${PW_PROJECT_ROOT+$(basename $(realpath ${PW_PROJECT_ROOT}))}
     printf "\e];${TABNAME:-bash}\a"
     if [[ -z ${TERM+x} ]]; then
-        export PS1=${ACTIVATE_PREFIX}-${PROMPT_CORE}
+        export PS1=${ACTIVATE_PREFIX}|${PROMPT_CORE}
     else
         color=2
-        export PS1="\[$(tput setaf ${color})\]${ACTIVATE_PREFIX}${ACTIVATE_PREFIX:+-}${PROMPT_CORE}\[$(tput sgr0)\]"
+        export PS1="\[$(tput setaf ${color})\]${ACTIVATE_PREFIX}${ACTIVATE_PREFIX:+|}${PROMPT_CORE}\[$(tput sgr0)\]"
     fi
 }
 function tabname {
@@ -33,6 +33,7 @@ export STAY_OFF_MY_LAWN=1
 export CONAN_COLOR_DARK=1
 export NODE_PATH=/usr/local/lib/node_modules
 export KOS_HOME=${HOME}/kos
+export GN_EDITOR=vim
 
 export ANT_HOME=/Users/edwin.vane/Library/apache-ant-1.9.6
 export PATH=/Users/edwin.vane/bin:/usr/local/opt/gnu-sed/libexec/gnubin:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/22.0.1:$ANT_HOME/bin:$PATH

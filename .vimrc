@@ -58,6 +58,7 @@ Plugin 'udalov/kotlin-vim'
 Plugin 'google/vim-maktaba'
 Plugin 'google/vim-codefmt'
 Plugin 'google/vim-glaive'
+Plugin 'cespare/vim-toml'
 Plugin 'https://gn.googlesource.com/gn', { 'rtp': 'misc/vim' }
 
 " All of your Plugins must be added before the following line
