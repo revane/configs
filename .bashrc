@@ -46,6 +46,7 @@ alias mp='mvim --remote-silent'
 alias agl='ag --no-group --ignore-dir test'
 alias gcert-fix='gcert --glogin_connect_timeout=60s --glogin_request_timeout=60s'
 alias glog='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
+alias acid='/google/bin/releases/mobile-devx-platform/acid/acid'
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 [ -f /usr/share/bash-completion/completions/git ] && . /usr/share/bash-completion/completions/git
@@ -61,11 +62,6 @@ function grt {
         cd $1
     fi
 }
-function ma {
-    hdiutil attach ~/dev/android_env.sparseimage -mountpoint /Volumes/android
-#    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home
-}
-function ua { hdiutil detach /Volumes/android; }
 
 function p29 {
   if [[ -n $PW_PROJECT_ROOT ]]; then
@@ -100,6 +96,16 @@ function serve_docs {
     return
   fi
   python3 -m http.server 5555 --directory $PW_PROJECT_ROOT/out/docs/gen/docs/html/
+}
+
+function upmain {
+  if [[ -z $PW_PROJECT_ROOT ]]; then
+    echo "Environment not activated"
+    return
+  fi
+  pushd $PW_PROJECT_ROOT
+  git checkout main && git pull --recurse-submodules=on-demand && git submodule update --init
+  popd
 }
 
 if [[ `which pyenv` ]]; then
