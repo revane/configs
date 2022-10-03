@@ -57,18 +57,17 @@ CFG_HOME=${HOME}/dev/configs
 cfg() { git --git-dir="${CFG_HOME}/.git/" --work-tree="${HOME}" "$@" ; }
 
 function grt {
-    git rev-parse && cd $(git rev-parse --show-toplevel)
-    if [[ $# -gt 0 ]]; then
-        cd $1
-    fi
+  git rev-parse && cd $(git rev-parse --show-toplevel)
+  if [[ $# -gt 0 ]]; then
+    cd $1
+  fi
 }
 
 function p29 {
+  cd ~/dev/p29
   if [[ -n $PW_PROJECT_ROOT ]]; then
-    echo "Environment already activated"
     return
   fi
-  cd ~/dev/p29
   . activate.sh
 }
 
@@ -96,16 +95,6 @@ function serve_docs {
     return
   fi
   python3 -m http.server 5555 --directory $PW_PROJECT_ROOT/out/docs/gen/docs/html/
-}
-
-function upmain {
-  if [[ -z $PW_PROJECT_ROOT ]]; then
-    echo "Environment not activated"
-    return
-  fi
-  pushd $PW_PROJECT_ROOT
-  git checkout main && git pull --recurse-submodules=on-demand && git submodule update --init
-  popd
 }
 
 if [[ `which pyenv` ]]; then
