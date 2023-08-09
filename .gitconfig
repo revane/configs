@@ -20,4 +20,4 @@
 [mergetool "meld"]
     cmd = meld "$LOCAL" "$BASE" "$REMOTE" --output "$MERGED" --auto-merge
 [http]
-	cookiefile = /usr/local/google/home/revane/.gitcookies
+	cookiefile = /home/revane/.gitcookies

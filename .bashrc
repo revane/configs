@@ -27,15 +27,13 @@ function tabname {
 export IS_CT=$([[ `uname -n` =~ .*.c.googlers.com ]] && echo true)
 export CLICOLOR=1
 export PROMPT_COMMAND="setps1"
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home
-export ANDROID_NDK=${HOME}/Library/Android/ndk
-export ANDROID_SDK=${HOME}/Library/Android/sdk
-export ANDROID_HOME=${HOME}/Library/Android/sdk
+export JAVA_HOME=/usr/lib/jvm/java-1.17.0-openjdk-amd64
 export STAY_OFF_MY_LAWN=1
 export CONAN_COLOR_DARK=1
 export NODE_PATH=/usr/local/lib/node_modules
 export KOS_HOME=${HOME}/kos
 export GN_EDITOR=vim
+export AUTH_SSH_CERTIFICATION=false
 
 export ANT_HOME=/Users/edwin.vane/Library/apache-ant-1.9.6
 export PATH=/usr/local/google/home/revane/bin:/Users/edwin.vane/bin:/usr/local/opt/gnu-sed/libexec/gnubin:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/22.0.1:$ANT_HOME/bin:$PATH
@@ -63,38 +61,8 @@ function grt {
   fi
 }
 
-function p29 {
-  cd ~/dev/p29
-  if [[ -n $PW_PROJECT_ROOT ]]; then
-    return
-  fi
-  . activate.sh
-}
-
-function gen {
-  if [[ -z $PW_PROJECT_ROOT ]]; then
-    echo "Environment not activated"
-    return
-  fi
-  pushd $PW_PROJECT_ROOT
-  gn gen out --check --export-compile-commands $*
-  popd
-}
-
-function ninjag {
-  if [[ -z $PW_PROJECT_ROOT ]]; then
-    echo "Environment not activated"
-    return
-  fi
-  ninja -C $PW_PROJECT_ROOT/out -t targets all | grep $1
-}
-
-function serve_docs {
-  if [[ -z $PW_PROJECT_ROOT ]]; then
-    echo "Environment not activated"
-    return
-  fi
-  python3 -m http.server 5555 --directory $PW_PROJECT_ROOT/out/docs/gen/docs/html/
+function stop-mux {
+  ssh -O stop -S "${HOME}/.ssh/master-revane@${1}:22" ${1}
 }
 
 if [[ `which pyenv` ]]; then
@@ -103,3 +71,7 @@ fi
 
 #/usr/bin/keychain ${HOME}/.ssh/id_rsa
 #source ${HOME}/.keychain/${HOSTNAME}-sh
+
+if [[ -n $ACTIVATE ]]; then
+  source $ACTIVATE
+fi
