@@ -9,6 +9,7 @@ if !exists("g:os")
     endif
 endif
 
+let g:piperlib_ignored_dirs = [$HOME]
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsListSnippets="<c-l>"
 let g:UltiSnipsSnippetDirectories=["UltiSnips", "mySnippets"]

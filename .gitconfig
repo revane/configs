@@ -20,4 +20,8 @@
 [mergetool "meld"]
     cmd = meld "$LOCAL" "$BASE" "$REMOTE" --output "$MERGED" --auto-merge
 [http]
-	cookiefile = /home/revane/.gitcookies
+	cookiefile = /usr/local/google/home/revane/.gitcookies
+[url "persistent-https://moohan-private-review.git.corp.google.com/"]
+	insteadOf = https://moohan-private-review.googlesource.com/
+[url "persistent-https://moohan-private.git.corp.google.com/"]
+	insteadOf = https://moohan-private.googlesource.com/
