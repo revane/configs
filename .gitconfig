@@ -25,3 +25,6 @@
 	insteadOf = https://moohan-private-review.googlesource.com/
 [url "persistent-https://moohan-private.git.corp.google.com/"]
 	insteadOf = https://moohan-private.googlesource.com/
+[repo]
+	superprojectChoiceExpire = 1709754282
+	superprojectChoice = true

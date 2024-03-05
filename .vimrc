@@ -42,6 +42,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'altercation/vim-colors-solarized'
 
 Plugin 'SirVer/ultisnips'
+Plugin 'kbenzie/vim-spirv'
 Plugin 'honza/vim-snippets'
 Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'mileszs/ack.vim'
@@ -76,6 +77,8 @@ filetype plugin indent on    " required
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
+
+
 let g:crunch_result_type_append=0
 syn on
 if has("gui_running")
@@ -83,6 +86,9 @@ if has("gui_running")
     colorscheme solarized
 endif
 filetype plugin indent on
+
+source /usr/share/vim/google/glug/bootstrap.vim
+Glug codefmt-google
 
 call glaive#Install()
 
