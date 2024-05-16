@@ -74,6 +74,12 @@ function glog {
 function glogb {
   git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --branches "$@"
 }
+function h2d {
+  echo $((16#$1))
+}
+function d2h {
+  printf '%x\n' $1
+}
 
 function mh {
   cd ${HOME}/dev/mha14
