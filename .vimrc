@@ -12,7 +12,7 @@ endif
 let g:piperlib_ignored_dirs = [$HOME]
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsListSnippets="<c-l>"
-let g:UltiSnipsSnippetDirectories=["UltiSnips", "mySnippets"]
+"let g:UltiSnipsSnippetDirectories=["UltiSnips", "mySnippets"]
 let g:UltiSnipsSnippetsDir="~/.vim/mySnippets"
 let g:UltiSnipsEditSplit="vertical"
 let g:ackprg='ag --nogroup --nocolor --column'
@@ -27,44 +27,116 @@ nnoremap K :Ack! "\b<C-R><C-W>\b"<CR>:cw<CR>
 set noeb
 autocmd! GUIEnter * set vb t_vb=
 
-" set the runtime path to include Vundle and initialize
+" Load the default google configuration and install Glug
+source /usr/share/vim/google/google.vim
+
+"==================================="
+" Load and Configure Google Plugins "
+"==================================="
+" For more plugins, see go/vim/plugins
+
+" :PiperSelectActiveFiles comes by default from google.vim. It's so useful that
+" we map it to <leader>p (i.e., ,p).
+" Use :h piper for more details about the piper integration
+noremap <leader>p :PiperSelectActiveFiles<CR>
+
+" Load the blaze plugins, with the ,b prefix on all commands.
+" Thus, to Blaze build, you can do <leader>bb.
+" Since we've set the mapleader to ',' above, this should be ,bb in practice
+Glug blaze plugin[mappings]='<leader>b'
+
+" Loads youcompleteme, the awesomest autocompletion engine.
+" See go/ycm for more details.
+Glug youcompleteme-google
+
+" GTImporter is a script that uses GTags to find and sort Java imports. This is
+" only useful for Java, so you will want to remove these lines if you don't use
+" Java. You can use with codefmt to auto-sort on write with:
+" autocmd FileType java AutoFormatBuffer gtimporter
+Glug gtimporter
+" Import the work under the cursor
+nnoremap <leader>si :GtImporter<CR>
+" Sort the imports in the (java) file
+nnoremap <leader>ss :GtImporterSort<CR>
+
+" Load the code formatting plugin. We first load the open-source version. Then,
+" we load the internal google settings. Then, we automatically enable formatting
+" when we write the file for Go, BUILD, proto, and c/cpp files.
+" Use :h codefmt-google or :h codefmt for more details.
+Glug codefmt
+Glug codefmt-google
+
+" Wrap autocmds inside an augroup to protect against reloading this script.
+" For more details, see:
+" https://learnvimscriptthehardway.stevelosh.com/chapters/14.html
+augroup autoformat
+  autocmd!
+  " Autoformat BUILD files on write.
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  " Autoformat go files on write.
+  autocmd FileType go AutoFormatBuffer gofmt
+  " Autoformat proto files on write.
+  autocmd FileType proto AutoFormatBuffer clang-format
+  " Autoformat c and c++ files on write.
+  autocmd FileType c,cpp AutoFormatBuffer clang-format
+augroup END
+
+" Load the G4 plugin, which allows G4MoveFile, G4Edit, G4Pending, etc.
+" Use :h g4 for more details about this plugin
+Glug g4
+
+" Load the Related Files plugin. Use :h relatedfiles for more details
+Glug relatedfiles
+nnoremap <leader>rf :RelatedFilesWindow<CR>
+
+" Enable the corpweb plugin, which allows us to open codesearch from vim
+Glug corpweb
+" search in codesearch for the word under the cursor
+nnoremap <leader>ws :CorpWebCs <cword> <CR>
+" search in codesearch for the current file
+nnoremap <leader>wf :CorpWebCsFile<CR>
+
+" Load the Critique integration. Use :h critique for more details
+Glug critique
+
 set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+if isdirectory(expand('$HOME/.vim/bundle/Vundle.vim'))
+  call vundle#begin()
+  " Let Vundle manage Vundle, required
+  Plugin 'VundleVim/vundle.vim'
+  " Install plugins that come from github.  Once Vundle is installed, these can be
+  " installed with :PluginInstall
 
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+  Plugin 'altercation/vim-colors-solarized'
+  
+  Plugin 'SirVer/ultisnips'
+  Plugin 'kbenzie/vim-spirv'
+  Plugin 'honza/vim-snippets'
+  Plugin 'octol/vim-cpp-enhanced-highlight'
+  Plugin 'mileszs/ack.vim'
+  Plugin 'tpope/vim-fugitive'
+  Plugin 'tpope/vim-vinegar'
+  Plugin 'tpope/tpope-vim-abolish'
+  Plugin 'tpope/vim-eunuch'
+  Plugin 'arecarn/crunch.git'
+  Plugin 'naseer/logcat'
+  Plugin 'elzr/vim-json'
+  Plugin 'pboettch/vim-cmake-syntax'
+  Plugin 'tell-k/vim-autopep8'
+  Plugin 'tommcdo/vim-exchange'
+  Plugin 'udalov/kotlin-vim'
+  Plugin 'cespare/vim-toml'
+  Plugin 'https://gn.googlesource.com/gn', { 'rtp': 'misc/vim' }
+  Plugin 'dhruvasagar/vim-table-mode'
 
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-Plugin 'altercation/vim-colors-solarized'
+  call vundle#end()
+else
+  echomsg 'Vundle is not installed. You can install Vundle from'
+      \ 'https://github.com/VundleVim/Vundle.vim'
+endif
 
-Plugin 'SirVer/ultisnips'
-Plugin 'kbenzie/vim-spirv'
-Plugin 'honza/vim-snippets'
-Plugin 'octol/vim-cpp-enhanced-highlight'
-Plugin 'mileszs/ack.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-vinegar'
-Plugin 'tpope/tpope-vim-abolish'
-Plugin 'tpope/vim-eunuch'
-Plugin 'arecarn/crunch.git'
-Plugin 'naseer/logcat'
-Plugin 'elzr/vim-json'
-Plugin 'pboettch/vim-cmake-syntax'
-Plugin 'tell-k/vim-autopep8'
-Plugin 'tommcdo/vim-exchange'
-Plugin 'udalov/kotlin-vim'
-Plugin 'google/vim-maktaba'
-Plugin 'google/vim-codefmt'
-Plugin 'google/vim-glaive'
-Plugin 'cespare/vim-toml'
-Plugin 'https://gn.googlesource.com/gn', { 'rtp': 'misc/vim' }
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
+
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on

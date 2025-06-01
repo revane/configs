@@ -47,11 +47,13 @@ alias agl='ag --no-group --ignore-dir test'
 alias gcert-fix='gcert --glogin_connect_timeout=60s --glogin_request_timeout=60s'
 alias acid='/google/bin/releases/mobile-devx-platform/acid/acid'
 alias acloudw='/google/src/head/depot/google3/wireless/android/test_tools/asuite/acloud/acloudw.sh'
+alias jvim='vim -u NONE'
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 [ -f /usr/share/bash-completion/completions/git ] && . /usr/share/bash-completion/completions/git
 [ -f ~/.git-completion.bash ] && . ~/.git-completion.bash
 [ -f ~/.ninja-complete ] && . ~/.ninja-complete
+[ -f /etc/bash_completion ] && ! shopt -oq posix && . /etc/bash_completion
 
 CFG_HOME=${HOME}/dev/configs
 cfg() { git --git-dir="${CFG_HOME}/.git/" --work-tree="${HOME}" "$@" ; }
@@ -97,12 +99,12 @@ function g3 {
     hg citc --list
     return 1
   fi
-  
+
   hgd $1
   if [[ $? -ne 0 ]]; then
     return 1
   fi
-  
+
   source gbash.sh
   # The '1' argument necessary to tell the function to do its search from the
   # caller's CWD not the location of the file holding this function.
